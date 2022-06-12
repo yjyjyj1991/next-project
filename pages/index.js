@@ -43,6 +43,7 @@ export default function Home({ allPostsData }) {
           ))}
         </ul>
       </section>
+      <div id="firebaseui-auth-container"></div>
     </Layout>
   );
 }
