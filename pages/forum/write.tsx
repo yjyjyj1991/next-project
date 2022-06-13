@@ -1,14 +1,19 @@
-import Layout from "../../components/layout";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/router";
 
 function write() {
+  const { user } = useAuth();
+  const router = useRouter();
   const handleSubmit = async (event) => {
     // Stop the form from submitting and refreshing the page.
     event.preventDefault();
 
     // Get data from the form.
     const data = {
-      first: event.target.first.value,
-      last: event.target.last.value,
+      title: event.target.title.value,
+      content: event.target.content.value,
+      uid: user.uid,
+      author: user.displayName,
     };
 
     // Send the data to the server in JSON format.
@@ -19,25 +24,19 @@ function write() {
 
     // Form the request for sending data to the server.
     const options = {
-      // The method is POST because we are sending data.
       method: "POST",
-      // Tell the server we're sending JSON.
       headers: {
         "Content-Type": "application/json",
       },
-      // Body of the request is the JSON data we created above.
       body: JSONdata,
     };
 
     // Send the form data to our forms API on Vercel and get a response.
     const response = await fetch(endpoint, options);
-
-    // Get the response data from server as JSON.
-    // If server returns the name submitted, that means the form works.
-    const result = await response.json();
+    if (response.status === 200) router.push("/forum");
   };
   return (
-    <Layout>
+    <>
       <form onSubmit={handleSubmit}>
         <label htmlFor="title">Title</label>
         <input type="text" id="title" name="title" required />
@@ -47,7 +46,7 @@ function write() {
 
         <button type="submit">Submit</button>
       </form>
-    </Layout>
+    </>
   );
 }
 

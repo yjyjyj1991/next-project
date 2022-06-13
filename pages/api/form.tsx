@@ -1,18 +1,25 @@
-import { saveForm } from "../../lib/firebase";
+import { addForm } from "../../lib/firebase";
 
 export default async function handler(req, res) {
   // Get data submitted in request's body.
-  const body = req.body;
+  const body = req.body as {
+    title: string;
+    content: string;
+    uid: string;
+    author: string;
+  };
 
-  // Guard clause checks for first and last name,
-  // and returns early if they are not found
-  if (!body.first || !body.last) {
+  if (!body.title || !body.content) {
     // Sends a HTTP bad request error code
-    return res.status(400).json({ data: "First or last name not found" });
+    return res.status(400).json({ data: "title or content not found" });
   }
 
-  // Found the name.
-  // Sends a HTTP success code
-  await saveForm(req.body);
-  res.status(200).json({ data: `${body.first} ${body.last}` });
+  if (body) {
+    try {
+      await addForm(body);
+      res.status(200).json({ data: body.title });
+    } catch (error) {
+      return res.status(400).json({ data: "error occured" });
+    }
+  }
 }

@@ -1,0 +1,23 @@
+.box {
+  border-bottom: 1px solid lightgrey;
+}
+
+.title {
+  display: inline-block;
+  width: 55%;
+  border-right: 1px solid lightgrey;
+  text-align: center;
+}
+
+.author {
+  display: inline-block;
+  width: 14%;
+  border-right: 1px solid lightgrey;
+  text-align: center;
+}
+
+.updated {
+  display: inline-block;
+  width: 30%;
+  text-align: center;
+}

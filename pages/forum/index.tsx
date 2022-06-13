@@ -1,14 +1,34 @@
-import Layout from "../../components/layout";
 import Link from "next/link";
+import { getArticles } from "../../lib/firebase";
+import Article from "../../components/Article";
+import styles from "../../components/article.module.css";
 
-function forum() {
+export default function forum({ articles }) {
+  const articleList = JSON.parse(articles);
+
   return (
-    <Layout>
+    <section>
       <Link href="/forum/write">
-        <a>post</a>
+        <a>New post</a>
       </Link>
-    </Layout>
+      <div className={styles.box}>
+        <div className={styles.title}>Title</div>
+        <div className={styles.author}>author</div>
+        <div className={styles.updated}>updated</div>
+      </div>
+      {articleList?.map((a, i) => (
+        <Article article={a} key={i} />
+      ))}
+    </section>
   );
 }
 
-export default forum;
+export async function getStaticProps() {
+  const articles = await getArticles();
+  return {
+    props: {
+      articles,
+    },
+    revalidate: 10,
+  };
+}
