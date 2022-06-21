@@ -59,7 +59,7 @@ export async function getArticles() {
     orderBy("createdAt")
   );
   const querySnapshot = await getDocs(articlesQuery);
-  const articles = [];
+  const articles: any[] = [];
   querySnapshot.forEach((snap) =>
     articles.push({ ...snap.data(), id: snap.id })
   );
@@ -68,7 +68,7 @@ export async function getArticles() {
 
 export async function getAllArticleIds() {
   const querySnapshot = await getDocs(collection(firestore, "forum"));
-  const ids = [];
+  const ids: any[] = [];
   querySnapshot.forEach((snap) => ids.push({ params: { id: snap.id } }));
   return ids;
 }
@@ -90,7 +90,7 @@ export async function getComments(id: string) {
     orderBy("updatedAt")
   );
   const querySnapshot = await getDocs(commentsQuery);
-  const comments = [];
+  const comments: any[] = [];
   querySnapshot.forEach((snap) =>
     comments.push({ ...snap.data(), id: snap.id })
   );

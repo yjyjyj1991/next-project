@@ -27,6 +27,10 @@ function Navbar() {
       <Link href="/forum">
         <a>Forum</a>
       </Link>
+
+      <Link href="/testing">
+        <a>테스트</a>
+      </Link>
     </div>
   );
 }

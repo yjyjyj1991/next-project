@@ -7,6 +7,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   useEffect(() => {
     if (!user) {
+      console.log("user not logged in: ", user);
       router.push("/login");
     }
   }, [user, router]);

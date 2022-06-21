@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { getComments } from "../lib/firebase";
 
 export default function Comments({ id }) {
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<
+    { content: string; id: string; author: string; uid: string }[]
+  >([]);
   useEffect(() => {
     async function getAndSetComments() {
       const data = await getComments(id);
