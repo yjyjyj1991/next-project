@@ -2,6 +2,7 @@ let peer, call, stream, conn;
 let model, webcam, maxPredictions;
 import Script from "next/script";
 import { useRef, useEffect, useState, useCallback } from "react";
+import styles from "./testing.module.css";
 
 const Home = () => {
   const myVideo = useRef();
@@ -25,11 +26,6 @@ const Home = () => {
     []
   );
 
-  useEffect(() => {
-    console.log("effect");
-    setTimeout(() => init(), 2000);
-  }, [init]);
-
   function ready() {
     console.log(youReady);
     if (youReady) {
@@ -46,6 +42,7 @@ const Home = () => {
   async function createPeerObj(e) {
     if (e.key === "Enter") {
       console.log("create peer obj");
+      init();
       peer = new Peer(e.target.value);
       peer.on("open", function (id) {
         console.log("My peer ID is: " + id);
@@ -59,9 +56,7 @@ const Home = () => {
             if (data.type === "ready") {
               setYouReady(true);
             } else {
-              setTimeout(() => {
-                gameStart();
-              }, data.startAt - Date.now());
+              setTimeout(() => gameStart(), data.startAt - Date.now());
             }
           });
         });
@@ -107,9 +102,10 @@ const Home = () => {
             if (data.type === "ready") {
               setYouReady(true);
             } else {
-              setTimeout(() => {
-                gameStart();
-              }, data.startAt - Date.now());
+              setTimeout(
+                gameStart.then(checkScissorsRockPaper()),
+                data.startAt - Date.now()
+              );
             }
           });
         });
@@ -129,8 +125,8 @@ const Home = () => {
       }
     }
     console.log(accumulated);
-    setYouReady(() => false);
-    setPlaying(() => false);
+    setYouReady(false);
+    setPlaying(false);
   }
 
   // run the webcam image through the image model
@@ -143,14 +139,17 @@ const Home = () => {
     setPlaying(true);
     const countdown = document.getElementById("countdown");
     let count = 3;
-    const interval = setInterval(() => {
-      if (count === 0) {
-        countdown.innerText = "지금!";
-        checkScissorsRockPaper();
-        clearInterval(interval);
-      }
-      countdown.innerText = count--;
-    }, 1000);
+
+    return await new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (count === 0) {
+          resolve();
+          clearInterval(interval);
+        } else {
+          countdown.innerText = count--;
+        }
+      }, 1000);
+    });
   }
 
   return (
@@ -167,12 +166,24 @@ const Home = () => {
         src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"
         strategy="beforeInteractive"
       />
-      peerjs
-      <input placeholder="your id" onKeyDown={createPeerObj} />
-      <input placeholder="peer id to call" onKeyDown={callPeer} />
-      <button onClick={ready}>ready</button>
-      <video ref={myVideo} autoPlay id="publisher" />
-      <video ref={yourVideo} autoPlay />
+      <label htmlFor="yourId">
+        사용하실 아이디를 입력 후 Enter를 입력해주세요
+      </label>
+      <input placeholder="your id" id="yourId" onKeyDown={createPeerObj} />
+      <br />
+      <label htmlFor="peerId">
+        상대의 아이디를 입력 후 Enter를 입력해주세요
+      </label>
+      <input placeholder="peer id to call" id="peerId" onKeyDown={callPeer} />
+      <br />
+      <label htmlFor="readtBtn">준비가 되었으면 버튼을 눌러주세요</label>
+      <button onClick={ready} id="readyBtn">
+        ready
+      </button>
+      <div className={styles.videoBox}>
+        <video ref={myVideo} autoPlay id="publisher" className={styles.video} />
+        <video ref={yourVideo} autoPlay className={styles.video} />
+      </div>
       <h1 id="countdown"></h1>
     </>
   );
